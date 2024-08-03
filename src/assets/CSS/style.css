@@ -1,0 +1,128 @@
+@import url('https://fonts.googleapis.com/css2?family=Playwrite+AT:ital,wght@0,100..400;1,100..400&display=swap');
+
+body{
+    background:whitesmoke;
+    
+}
+
+
+  .MyNav{
+    margin-top: 10px;
+  }
+  .imgLogo {
+    max-width: 70px;
+    height: 10%;
+  }
+  
+  .navbar {
+    background-color: orange; 
+  }
+  
+  .nav-link {
+    font-weight: bold;
+    color: #333; 
+  }
+  
+  .nav-link:hover {
+    color: #555;
+  }
+  
+  .location-form {
+    position: relative;
+    margin-right: 1rem;
+  }
+  
+  .location-icon {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none;
+    color: #333;
+  }
+  
+  .search-form .btn-outline-success {
+    color: #28a745;
+    border-color: #28a745;
+  }
+  
+  .search-form .btn-outline-success:hover {
+    background-color: #28a745;
+    color: #13e068;
+  }
+
+  .register{
+    border: 1px solid black;
+    box-sizing: border-box;
+    padding: 10px;
+    margin-top: 10px;
+    border-radius: 1%;
+  }
+
+  .card-container {
+    padding-top: 20px;
+    padding-bottom: 20px;
+  }
+  
+  .main-card {
+    width: 60%;
+    margin: 0 auto;
+  }
+  
+  .info {
+    text-align: center;
+    padding: 10px;
+  }
+  
+  .tabs .tab {
+    cursor: pointer;
+    padding: 10px;
+    background-color: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 5px;
+    margin: 0 5px;
+  }
+  
+  .tabs .tab.active {
+    background-color: #007bff;
+    color: white;
+  }
+  
+  .details {
+    padding-top: 20px;
+  }
+  
+  .book-button {
+    width: 20%;
+    text-align: center;
+    margin-top: 20px;
+  }
+
+  
+.myForm{
+  border: 1px solid black;
+  border-radius: 5%;
+  width: 100%;
+  height: 50vh;
+  background-color:greenyellow;
+  box-sizing: border-box;
+  padding: 1rem;
+  overflow-x: hidden;
+  overflow-y: scroll;
+}
+.contact{
+  margin-top: 0%;
+  margin-left: 3%;
+  padding: 5%;
+  .contact2{
+    margin: 0.5%;
+    padding: 2%;
+  }
+  .contact3{
+    margin-left: 5.5%;
+    padding: 10px;
+  }
+}
+.button-spacing {
+  margin-right: 10px; 
+}
