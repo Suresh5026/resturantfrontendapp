@@ -9,14 +9,13 @@ import Login from "./assets/Components/Pages/Login";
 import Cardsclick from "./assets/Components/Pages/Cardsclick";
 import Createres from "./assets/Components/Pages/Createres";
 import { RestaurantProvider } from "./assets/Context/Rescontext";
-import Transaction from "./assets/Components/Pages/Transaction";
 import EditRestaurant from "./assets/Components/Pages/Editrestaurant";
-import { AuthProvider } from "./assets/Context/Authcontext";
+
 
 function App() {
   return (
     <>
-      <AuthProvider>
+     
         <RestaurantProvider>
           <Container>
             <Row>
@@ -32,12 +31,12 @@ function App() {
                 <Route Component={Login} path="/login" />
                 <Route Component={Createres} path="/createRes" />
                 <Route Component={EditRestaurant} path="/edit-restaurant/:id" />
-                <Route Component={Transaction} path="/transaction" />
+                
               </Routes>
             </Row>
           </Container>
         </RestaurantProvider>
-      </AuthProvider>
+      
     </>
   );
 }

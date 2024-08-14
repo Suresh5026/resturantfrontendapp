@@ -2,7 +2,6 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { Button } from "react-bootstrap";
 import Table from "react-bootstrap/Table";
-import Payment from "./Payment";
 
 export default function Bookings() {
   const headings = [
@@ -17,8 +16,6 @@ export default function Bookings() {
   ];
 
   const [book, setBook] = useState([]);
-  const [selectedBooking, setSelectedBooking] = useState(null);
-  const [showPaymentForm, setShowPaymentForm] = useState(false);
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -43,47 +40,16 @@ export default function Bookings() {
     }
   }, []);
 
-  const handlePayNow = (booking) => {
-    setSelectedBooking(booking);
-    setShowPaymentForm(true);
-  };
-
-  const handlePaymentSuccess = async (transactionNumber) => {
-    alert(`Payment successful. Transaction Number: ${transactionNumber}`);
-    setShowPaymentForm(false);
-
-    try {
-      const token = localStorage.getItem("token");
-      await axios.put(
-        `https://restaurantappbackend-ssw6.onrender.com/book/update-booking-payment/${selectedBooking._id}`,
-        { transactionNumber },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          }
-        }
-      );
-
-      setBook((prevBooks) =>
-        prevBooks.map((book) =>
-          book._id === selectedBooking._id
-            ? { ...book, status: "Paid", transactionNumber }
-            : book
-        )
-      );
-    } catch (error) {
-      console.error("Error updating booking payment:", error);
-    }
-  };
-
   const handleCancelBooking = async (id) => {
     try {
       const token = localStorage.getItem("token");
-      const confirmCancel = window.confirm("Are you sure you want to cancel this booking?");
+      const confirmCancel = window.confirm(
+        "Are you sure you want to cancel this booking?"
+      );
       if (!confirmCancel) {
-        return; 
+        return;
       }
-     await axios.put(
+      await axios.put(
         `https://restaurantappbackend-ssw6.onrender.com/book/cancel-booking/${id}`,
         {},
         {
@@ -93,15 +59,60 @@ export default function Bookings() {
           },
         }
       );
-     
+
       setBook((prevBooks) =>
         prevBooks.map((book) =>
-          book._id === id ? {...book,status:"Cancelled"} : book
+          book._id === id ? { ...book, status: "Cancelled" } : book
         )
       );
     } catch (error) {
       console.error("Error cancelling booking:", error);
     }
+  };
+
+  const handleOpenRazropay = (data, userId, bookingId) => {
+    const options = {
+      key: "rzp_test_tGoWeh9ybvAQtC",
+      amount: Number(data.amount),
+      currency: "INR",
+      name: "The Fork Restaurant App",
+      order_id: data.id,
+      handler: function (response) {
+        console.log(response);
+        axios
+          .post("https://restaurantappbackend-ssw6.onrender.com/payment/verify", {
+            response: response,
+            bookingId: bookingId,
+          })
+          .then((res) => {
+            console.log(res.data);
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      },
+    };
+    const rzp = new window.Razorpay(options);
+    rzp.open();
+  };
+
+  const handlePayment = (amount, userId, bookingId) => {
+    const data = {
+      amount: Number(amount),
+      userId: userId,
+      bookingId: bookingId,
+    };
+    console.log(data);
+
+    axios
+      .post("https://restaurantappbackend-ssw6.onrender.com/payment/orders", data)
+      .then((res) => {
+        console.log(res.data);
+        handleOpenRazropay(res.data.data, userId, bookingId);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   };
 
   return (
@@ -123,14 +134,22 @@ export default function Bookings() {
               <td>{element.guests}</td>
               <td>{element._id}</td>
               <td>{element.amount}</td>
+
               <td>
-                {
-                  element.status !== "Paid" &&
-                  element.status !== "Cancelled" && (
+                {(element.status !== "Paid" &&
+                  element.status !== "Cancelled" &&
+                  element.paymentStatus !== "Paid" && (
                     <>
                       <Button
                         variant="primary"
-                        onClick={() => handlePayNow(element)}
+                        className="me-2"
+                        onClick={() => {
+                          handlePayment(
+                            element.amount,
+                            element.userId,
+                            element._id
+                          );
+                        }}
                       >
                         Pay Now
                       </Button>
@@ -141,20 +160,17 @@ export default function Bookings() {
                         Cancel Booking
                       </Button>
                     </>
-                  )}
+                  )) || (
+                  <>
+                    <div>{element.paymentStatus}</div>
+                  </>
+                )}
               </td>
               <td>{element.status}</td>
             </tr>
           ))}
         </tbody>
       </Table>
-      {showPaymentForm && selectedBooking && (
-        <Payment
-          booking={selectedBooking}
-          totalAmount={selectedBooking.amount}
-          onPaymentSuccess={handlePaymentSuccess}
-        />
-      )}
     </>
   );
 }

@@ -10,6 +10,7 @@ const validateEmail = (email) => {
 
 export default function Login() {
   const [alertMessage, setAlertMessage] = useState(null);
+  const [forceUpdate, setForceUpdate] = useState(0); 
   const navigate = useNavigate();
   return (
     <>
@@ -41,8 +42,11 @@ export default function Login() {
                     if (result.message === "Login Successful") {
                       localStorage.setItem("token",result.token);
                       localStorage.setItem("role",result.role);
+                      localStorage.setItem("userId",result._id);
+
                       setSubmitting(false)
                       navigate("/");
+                      setForceUpdate(prev => prev + 1);
                     } else {
                       console.log("Login Failed", result.message);
                       setAlertMessage(result.message);
@@ -111,7 +115,7 @@ export default function Login() {
                     </Button>
                   </div>
                   <div className="d-flex justify-content-center">
-                    <Link to="/signup">Don't have an account? Sing Up</Link>
+                    <Link to="/signup">Don't have an account? Sign Up</Link>
                   </div>
                   {alertMessage && (
                     <div className="alert alert-danger mt-3">{alertMessage}</div>

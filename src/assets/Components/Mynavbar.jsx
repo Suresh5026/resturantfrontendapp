@@ -1,5 +1,5 @@
 import Container from "react-bootstrap/Container";
-import { useState, useContext } from "react";
+import { useState, useContext, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Nav from "react-bootstrap/Nav";
 import Navbar from "react-bootstrap/Navbar";
@@ -7,38 +7,32 @@ import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 import { Link } from "react-router-dom";
 import { RestaurantContext } from "../Context/Rescontext";
-import { AuthContext } from "../Context/Authcontext";
 
 export default function Mynavbar() {
-  const {isLoggedIn, userRole, logout } = useContext(AuthContext);
-  const [searchItem, setSearchItem] = useState("");
   const { city } = useContext(RestaurantContext);
   const navigate = useNavigate();
-  console.log(userRole);
-  
-  const handleLogout = () => {
-    logout();
+
+  // Check local storage directly to avoid initial render issues
+  const isLoggedIn = localStorage.getItem("token") !== null;
+  const userRole = localStorage.getItem("role");
+
+  const [searchItem, setSearchItem] = useState("");
+
+  const logout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("role");
     navigate("/");
   };
 
   const handleCityChange = (event) => {
     const selectedCity = event.target.value;
-    if (selectedCity) {
-      navigate(`/?city=${selectedCity}`);
-    } else {
-      navigate("/");
-    }
-  };
-  const handleSearchChange = (event) => {
-    setSearchItem(event.target.value);
-    if (event.target.value) {
-      navigate(`/?search=${event.target.value}`);
-    } else {
-      navigate("/");
-    }
+    navigate(selectedCity ? `/?city=${selectedCity}` : "/");
   };
 
- 
+  const handleSearchChange = (event) => {
+    setSearchItem(event.target.value);
+    navigate(event.target.value ? `/?search=${event.target.value}` : "/");
+  };
 
   return (
     <Navbar collapseOnSelect expand="lg" className="MyNav">
@@ -86,36 +80,30 @@ export default function Mynavbar() {
             <Nav.Link as={Link} to="/">
               Home
             </Nav.Link>
-            <Nav.Link as={Link} to="/contact">
-              Contact us
-            </Nav.Link>
+            
             {isLoggedIn && userRole === "admin" && (
               <Nav.Link as={Link} to="/createRes">
                 Create Restaurant
               </Nav.Link>
             )}
+            <Nav.Link as={Link} to="/contact">
+              Contact us
+          </Nav.Link>
 
-            {!isLoggedIn ? (
-              <>
-                {/* <Nav.Link as={Link} to="/signup">
-                  Sign Up
-                </Nav.Link> */}
-                <Nav.Link as={Link} to="/login">
-                  Login
-                </Nav.Link>
-              </>
-            ) : (
+            {isLoggedIn ? (
               <>
                 <Nav.Link as={Link} to="/bookings">
                   Bookings
                 </Nav.Link>
-                <Nav.Link as={Link} to="/transaction">
-                  Transaction
-                </Nav.Link>
-                <Nav.Link onClick={handleLogout}>Logout</Nav.Link>
+                <Nav.Link onClick={logout}>Logout</Nav.Link>
               </>
+            ) : (
+              <Nav.Link as={Link} to="/login">
+                Login
+              </Nav.Link>
             )}
           </Nav>
+          
         </Navbar.Collapse>
       </Container>
     </Navbar>

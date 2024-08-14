@@ -3,7 +3,7 @@ import Breadcrumb from "react-bootstrap/Breadcrumb";
 import { Form } from "react-bootstrap";
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 export default function Hotelsui() {
   const [user, setUser] = useState(null);
@@ -33,7 +33,7 @@ export default function Hotelsui() {
     };
 
     fetchUserDetails();
-  }, []);
+  }, [user]);
 
   useEffect(() => {
     const queryParams = new URLSearchParams(location.search);
