@@ -10,3 +10,8 @@ This is the frontend for the Restaurant Application built using React.js, CSS, R
 - Axios
 - Formik
 - React Router DOM
+
+## Demonstrate Credentials
+
+-- Admin user - admin@mail.com admin@123
+-- User - Raju@mail.com 12345678
